@@ -4,210 +4,193 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SodiumPay - Future Payment</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
         :root {
-            --primary: #007AFF; /* Electric Blue */
+            --primary: #007AFF;
             --secondary: #0047AB;
-            --dark: #0A0E17; /* Navy Gelap */
+            --dark: #0A0E17;
             --bg: #F8FAFC;
             --white: #FFFFFF;
-            --glass: rgba(255, 255, 255, 0.8);
+            --gray: #94A3B8;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--dark); overflow-x: hidden; }
 
-        body { background-color: var(--bg); color: var(--dark); padding-bottom: 90px; }
+        /* ANIMASI TRANSISI */
+        .page { display: none; min-height: 100vh; animation: fadeIn 0.4s ease-out; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* HEADER & SALDO */
-        .header-top {
-            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
-            padding: 30px 20px 80px 20px;
-            color: white;
-            border-bottom-right-radius: 40px;
-            border-bottom-left-radius: 40px;
+        /* AUTH STYLES (LOGIN & REGISTER) */
+        .auth-container { padding: 40px 25px; text-align: center; }
+        .auth-logo { font-size: 32px; font-weight: 800; color: var(--primary); margin-bottom: 10px; }
+        .auth-logo span { color: var(--dark); }
+        .auth-subtitle { color: var(--gray); font-size: 14px; margin-bottom: 40px; }
+
+        .input-group { text-align: left; margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--dark); }
+        .input-group input {
+            width: 100%; padding: 16px; border-radius: 15px; border: 1.5px solid #E2E8F0;
+            background: white; font-size: 14px; transition: 0.3s;
         }
+        .input-group input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1); }
 
-        .brand-name { font-size: 22px; font-weight: 800; letter-spacing: 1px; }
-        .brand-name span { color: #87CEEB; } 
-
-        .user-greet { margin-top: 15px; display: flex; align-items: center; gap: 10px; }
-        .avatar { width: 45px; height: 45px; border-radius: 50%; border: 2px solid white; }
-
-        /* FLOATING BALANCE CARD */
-        .balance-card {
-            background: var(--white);
-            margin: -50px 20px 0 20px;
-            padding: 20px;
-            border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .btn-main {
+            width: 100%; background: var(--primary); color: white; padding: 18px;
+            border-radius: 15px; border: none; font-size: 16px; font-weight: 700;
+            cursor: pointer; margin-top: 10px; box-shadow: 0 10px 20px rgba(0, 122, 255, 0.2);
         }
+        .auth-footer { margin-top: 25px; font-size: 14px; color: var(--gray); }
+        .auth-footer span { color: var(--primary); font-weight: 700; cursor: pointer; }
 
-        .balance-info p { font-size: 12px; color: #777; font-weight: 600; }
-        .balance-info h2 { font-size: 20px; font-weight: 800; color: var(--dark); }
-
-        .btn-topup {
-            background: var(--primary);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 15px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 14px;
-            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
-        }
-
-        /* MENU SECTION */
+        /* DASHBOARD STYLES (DARI KODE SEBELUMNYA) */
+        .header-top { background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%); padding: 30px 20px 80px 20px; color: white; border-bottom-right-radius: 40px; border-bottom-left-radius: 40px; }
+        .balance-card { background: var(--white); margin: -50px 20px 0 20px; padding: 20px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
         .section-container { padding: 25px 20px 0 20px; }
-        .section-title { font-size: 16px; font-weight: 800; margin-bottom: 15px; color: var(--dark); }
-
-        .grid-menu {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px 10px;
-        }
-
-        .menu-box {
-            text-decoration: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: 0.3s;
-        }
-
-        .icon-circle {
-            width: 55px;
-            height: 55px;
-            background: var(--white);
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            font-size: 22px;
-            color: var(--primary);
-            border: 1px solid #f0f0f0;
-        }
-
-        .menu-box:active { transform: scale(0.9); }
-        .menu-box span { font-size: 11px; font-weight: 700; color: #444; text-align: center; }
-
-        /* PROMO BANNER */
-        .banner {
-            width: 100%;
-            height: 140px;
-            background: url('https://img.freepik.com/free-vector/digital-technology-blue-banner-with-light-effect_1017-31050.jpg') center/cover;
-            border-radius: 20px;
-            margin-bottom: 20px;
-        }
-
-        /* BOTTOM NAV */
-        .bottom-nav {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background: var(--dark);
-            height: 65px;
-            border-radius: 20px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .nav-link { color: rgba(255, 255, 255, 0.5); text-decoration: none; font-size: 20px; transition: 0.3s; }
-        .nav-link.active { color: var(--primary); transform: translateY(-5px); }
-        
+        .grid-menu { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 10px; }
+        .icon-circle { width: 55px; height: 55px; background: var(--white); border-radius: 18px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); font-size: 22px; color: var(--primary); border: 1px solid #f0f0f0; }
+        .bottom-nav { position: fixed; bottom: 20px; left: 20px; right: 20px; background: var(--dark); height: 65px; border-radius: 20px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .nav-link { color: rgba(255,255,255,0.4); font-size: 22px; cursor: pointer; }
+        .nav-link.active { color: var(--primary); }
     </style>
 </head>
 <body>
 
-    <!-- TOP AREA -->
-    <div class="header-top">
-        <div class="brand-name">Sodium<span>Pay</span></div>
-        <div class="user-greet">
-            <img src="https://ui-avatars.com/api/?name=han&background=fff&color=007AFF" class="avatar">
-            <div>
-                <p style="font-size: 12px; opacity: 0.8;">Selamat Datang,</p>
-                <p style="font-weight: 700;">han</p>
+    <!-- HALAMAN DAFTAR (REGISTER) -->
+    <div id="page-register" class="page active">
+        <div class="auth-container">
+            <div class="auth-logo">Sodium<span>Pay</span></div>
+            <p class="auth-subtitle">Buat akun untuk mulai masa depan pembayaran</p>
+            
+            <div class="input-group">
+                <label>Nama Lengkap</label>
+                <input type="text" id="reg-name" placeholder="Masukkan nama kamu">
+            </div>
+            <div class="input-group">
+                <label>Alamat Email</label>
+                <input type="email" id="reg-email" placeholder="contoh@mail.com">
+            </div>
+            <div class="input-group">
+                <label>Nomor Telepon</label>
+                <input type="tel" id="reg-phone" placeholder="0812xxxx">
+            </div>
+            <div class="input-group">
+                <label>Kode Referral (Opsional)</label>
+                <input type="text" placeholder="Masukkan kode jika ada">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="reg-pass" placeholder="••••••••">
+            </div>
+            <div class="input-group">
+                <label>Konfirmasi Password</label>
+                <input type="password" id="reg-confirm" placeholder="••••••••">
+            </div>
+
+            <button class="btn-main" onclick="goToLogin()">Daftar Sekarang</button>
+            
+            <p class="auth-footer">Sudah punya akun? <span onclick="showPage('page-login')">Masuk</span></p>
+        </div>
+    </div>
+
+    <!-- HALAMAN LOGIN -->
+    <div id="page-login" class="page">
+        <div class="auth-container">
+            <div class="auth-logo">Sodium<span>Pay</span></div>
+            <p class="auth-subtitle">Silakan masuk untuk melanjutkan</p>
+            
+            <div class="input-group">
+                <label>Email atau Nomor HP</label>
+                <input type="text" id="login-id" placeholder="Masukkan email/HP">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="login-pass" placeholder="••••••••">
+            </div>
+
+            <button class="btn-main" onclick="goToMain()">Masuk Ke Aplikasi</button>
+            
+            <p class="auth-footer">Belum punya akun? <span onclick="showPage('page-register')">Daftar</span></p>
+        </div>
+    </div>
+
+    <!-- HALAMAN UTAMA (DASHBOARD) -->
+    <div id="page-main" class="page">
+        <div class="header-top">
+            <div class="brand-name">Sodium<span>Pay</span></div>
+            <div class="user-greet" style="margin-top:15px; display:flex; align-items:center; gap:12px;">
+                <img src="https://ui-avatars.com/api/?name=han&background=fff&color=007AFF" style="width:45px; border-radius:50%; border:2px solid white;">
+                <div>
+                    <p style="font-size: 12px; opacity: 0.8;">Selamat Datang,</p>
+                    <p style="font-weight: 700;" id="display-name">han</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- BALANCE AREA -->
-    <div class="balance-card">
-        <div class="balance-info">
-            <p>Sodium Balance</p>
-            <h2>Rp 1.250.000</h2>
+        <div class="balance-card">
+            <div class="balance-info">
+                <p style="font-size:12px; color:#777;">Sodium Balance</p>
+                <h2>Rp 1.250.000</h2>
+            </div>
+            <button class="btn-main" style="width:auto; padding:10px 20px; margin:0;">+ TOPUP</button>
         </div>
-        <a href="#" class="btn-topup">+ TOPUP</a>
-    </div>
 
-    <!-- BANNER PROMO -->
-    <div class="section-container">
-        <div class="banner"></div>
-    </div>
-
-    <!-- MAIN SERVICES -->
-    <div class="section-container">
-        <div class="section-title">Sodium Games</div>
-        <div class="grid-menu">
-            <a href="#" class="menu-box">
-                <div class="icon-circle"><i class="fas fa-gamepad"></i></div>
-                <span>MLBB</span>
-            </a>
-            <a href="#" class="menu-box">
-                <div class="icon-circle"><i class="fas fa-fire"></i></div>
-                <span>Free Fire</span>
-            </a>
-            <a href="#" class="menu-box">
-                <div class="icon-circle"><i class="fas fa-gun"></i></div>
-                <span>PUBG</span>
-            </a>
-            <a href="#" class="menu-box">
-                <div class="icon-circle"><i class="fas fa-grid-2"></i></div>
-                <span>Lainnya</span>
-            </a>
+        <div class="section-container">
+            <p style="font-weight:800; margin-bottom:15px;">Sodium Games</p>
+            <div class="grid-menu">
+                <div class="menu-box"><div class="icon-circle"><i class="fas fa-gamepad"></i></div><span>MLBB</span></div>
+                <div class="menu-box"><div class="icon-circle"><i class="fas fa-fire"></i></div><span>Free Fire</span></div>
+                <div class="menu-box"><div class="icon-circle"><i class="fas fa-gun"></i></div><span>PUBG</span></div>
+                <div class="menu-box"><div class="icon-circle"><i class="fas fa-th-large"></i></div><span>Lainnya</span></div>
+            </div>
         </div>
+
+        <nav class="bottom-nav">
+            <div class="nav-link active"><i class="fas fa-home"></i></div>
+            <div class="nav-link"><i class="fas fa-history" style="opacity:0.5;"></i></div>
+            <div class="nav-link"><i class="fas fa-bell" style="opacity:0.5;"></i></div>
+            <div class="nav-link"><i class="fas fa-user-circle" style="opacity:0.5;"></i></div>
+        </nav>
     </div>
 
-    <!-- BILLS -->
-    <div class="section-container">
-        <div class="section-title">Sodium Bills</div>
-        <div class="grid-menu">
-            <a href="#" class="menu-box">
-                <div class="icon-circle"><i class="fas fa-bolt"></i></div>
-                <span>PLN</span>
-            </a>
-            <a href="#" class="menu-box">
-                <div class="icon-circle"><i class="fas fa-tint"></i></div>
-                <span>PDAM</span>
-            </a>
-            <a href="#" class="menu-box">
-                <div class="icon-circle"><i class="fas fa-wifi"></i></div>
-                <span>Internet</span>
-            </a>
-            <a href="#" class="menu-box">
-                <div class="icon-circle"><i class="fas fa-phone"></i></div>
-                <span>Pulsa</span>
-            </a>
-        </div>
-    </div>
+    <script>
+        // Fungsi pindah halaman
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0,0);
+        }
 
-    <!-- BOTTOM NAV -->
-    <nav class="bottom-nav">
-        <a href="#" class="nav-link active"><i class="fas fa-home"></i></a>
-        <a href="#" class="nav-link"><i class="fas fa-history"></i></a>
-        <a href="#" class="nav-link"><i class="fas fa-bell"></i></a>
-        <a href="#" class="nav-link"><i class="fas fa-user-circle"></i></a>
-    </nav>
+        // Simulasi Daftar -> Pindah ke Login
+        function goToLogin() {
+            const name = document.getElementById('reg-name').value;
+            if(!name) { alert('Isi nama dulu bos!'); return; }
+            
+            alert('Pendaftaran Berhasil! Silakan Login.');
+            showPage('page-login');
+        }
 
+        // Simulasi Login -> Pindah ke Main Dashboard
+        function goToMain() {
+            const loginId = document.getElementById('login-id').value;
+            const loginPass = document.getElementById('login-pass').value;
+
+            if(loginId && loginPass) {
+                // Ambil nama dari input register tadi buat pamer di dashboard
+                const registeredName = document.getElementById('reg-name').value;
+                if(registeredName) {
+                    document.getElementById('display-name').innerText = registeredName;
+                }
+                
+                showPage('page-main');
+            } else {
+                alert('Email dan Password harus diisi!');
+            }
+        }
+    </script>
 </body>
 </html>
