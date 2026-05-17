@@ -3,255 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SodiumPay - TITAN Edition</title>
+    <title>SodiumPay - GOD MODE</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --primary: #007AFF; --dark: #0A0E17; --bg: #F2F5F9; --white: #FFFFFF; --error: #FF3B30; --gray: #94A3B8; --success: #34C759; --warning: #FFCC00; }
+        :root {
+            --primary: #007AFF; --dark: #0A0E17; --bg: #F2F5F9; --white: #FFFFFF;
+            --error: #FF3B30; --gray: #94A3B8; --success: #34C759; --orange: #FF9500;
+        }
+
+        /* DARK MODE SUPPORT */
+        body.dark-mode { --bg: #050505; --white: #121212; --dark: #FFFFFF; --gray: #555; }
+        body.dark-mode .card, body.dark-mode .modal, body.dark-mode .bottom-nav { background: #181818 !important; color: white !important; }
+        body.dark-mode .input-group input { background: #222; border-color: #333; color: white; }
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--dark); overflow: hidden; height: 100vh; }
+        body { background-color: var(--bg); color: var(--dark); overflow: hidden; height: 100vh; transition: 0.3s; }
 
         /* SPLASH SCREEN */
-        #splash { position: fixed; inset: 0; background: var(--dark); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.8s cubic-bezier(0.65, 0, 0.35, 1); }
-        .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        #splash { position: fixed; inset: 0; background: var(--dark); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .spin { width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: rot 1s linear infinite; }
+        @keyframes rot { to { transform: rotate(360deg); } }
 
-        /* NAVIGATION SYSTEM */
-        .page { display: none; min-height: 100vh; position: absolute; inset: 0; background: var(--bg); overflow-y: auto; padding-bottom: 110px; }
-        .page.active { display: block; animation: pageIn 0.4s ease; }
-        @keyframes pageIn { from { opacity: 0; transform: scale(1.05); } to { opacity: 1; transform: scale(1); } }
+        /* PAGE SYSTEM */
+        .page { display: none; min-height: 100vh; position: absolute; inset: 0; background: var(--bg); overflow-y: auto; padding-bottom: 120px; }
+        .page.active { display: block; animation: zoomIn 0.4s ease; }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(1.1); } to { opacity: 1; transform: scale(1); } }
 
-        /* AUTH DESIGNS */
-        .auth-card { padding: 60px 25px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
-        .logo-main { font-size: 38px; font-weight: 800; text-align: center; color: var(--primary); margin-bottom: 5px; }
-        .logo-main span { color: var(--dark); }
-        .input-box { margin-bottom: 18px; }
-        .input-box label { display: block; font-size: 11px; font-weight: 800; color: var(--gray); margin-bottom: 8px; letter-spacing: 1px; }
-        .input-box input { width: 100%; padding: 18px; border-radius: 16px; border: 1.5px solid #E2E8F0; font-size: 15px; outline: none; transition: 0.3s; }
-        .btn-action { width: 100%; background: var(--primary); color: white; padding: 20px; border-radius: 18px; border: none; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 10px 25px rgba(0,122,255,0.25); }
+        /* HEADER & CARD */
+        .dash-header { background: linear-gradient(180deg, var(--dark) 0%, var(--primary) 100%); padding: 50px 25px 120px; color: white; border-radius: 0 0 50px 50px; position: relative; }
+        .v-card { background: linear-gradient(45deg, #222, #444); width: 100%; height: 180px; border-radius: 25px; margin-top: -90px; padding: 25px; color: white; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.2); overflow: hidden; }
+        .v-card::before { content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%; }
 
-        /* DASHBOARD COMPONENTS */
-        .dashboard-header { background: linear-gradient(180deg, var(--dark) 0%, var(--primary) 100%); padding: 40px 25px 100px; color: white; border-radius: 0 0 45px 45px; position: relative; }
-        .user-badge { position: absolute; top: 40px; right: 25px; background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; border: 1px solid rgba(255,255,255,0.3); }
+        /* GRID SYSTEM */
+        .section-label { padding: 25px 25px 10px; font-weight: 800; font-size: 15px; display: flex; justify-content: space-between; }
+        .grid-box { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 10px; padding: 10px 20px; }
+        .g-item { text-align: center; cursor: pointer; }
+        .g-icon { width: 55px; height: 55px; background: var(--white); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 8px 15px rgba(0,0,0,0.04); font-size: 22px; color: var(--primary); }
+        .g-item span { font-size: 10px; font-weight: 800; opacity: 0.8; }
 
-        .balance-widget { background: var(--white); margin: -70px 20px 0; padding: 25px; border-radius: 28px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
-        .quick-actions { display: flex; justify-content: space-between; margin-top: 20px; border-top: 1px solid #f0f0f0; padding-top: 15px; }
-        .action-item { text-align: center; font-size: 10px; font-weight: 700; color: var(--primary); cursor: pointer; }
-        .action-item i { display: block; font-size: 20px; margin-bottom: 5px; }
+        /* ANALYTICS CHART SIMULATION */
+        .chart-box { background: var(--white); margin: 0 20px; padding: 20px; border-radius: 25px; display: flex; align-items: flex-end; justify-content: space-around; height: 150px; }
+        .bar { width: 30px; background: var(--primary); border-radius: 8px 8px 0 0; animation: grow 1s ease-out; }
+        @keyframes grow { from { height: 0; } }
 
-        .promo-slider { margin: 25px 20px; border-radius: 20px; height: 140px; background: linear-gradient(45deg, #FF512F, #DD2476); color: white; padding: 20px; position: relative; overflow: hidden; display: flex; align-items: center; }
-        .promo-slider::after { content: '\f135'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; right: -20px; bottom: -20px; font-size: 120px; opacity: 0.1; }
+        /* NAVIGATION */
+        .bottom-nav { position: fixed; bottom: 20px; left: 20px; right: 20px; background: var(--dark); height: 75px; border-radius: 25px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 15px 40px rgba(0,0,0,0.4); z-index: 1000; }
+        .nav-tab { color: rgba(255,255,255,0.3); font-size: 22px; }
+        .nav-tab.active { color: var(--primary); transform: translateY(-10px); }
 
-        /* SERVICES GRID */
-        .service-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 10px; padding: 10px 20px; }
-        .service-item { text-align: center; cursor: pointer; }
-        .service-icon { width: 55px; height: 55px; background: white; border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.04); font-size: 22px; color: var(--primary); border: 1px solid #f0f0f0; }
-        .service-item span { font-size: 10px; font-weight: 800; color: #444; line-height: 1.2; display: block; }
+        /* MODAL */
+        #modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 20000; justify-content: center; align-items: center; padding: 30px; }
+        .modal { background: var(--white); width: 100%; max-width: 330px; padding: 40px 30px; border-radius: 35px; text-align: center; }
+        .modal button { width: 100%; padding: 18px; border-radius: 15px; border: none; font-weight: 800; margin-top: 20px; cursor: pointer; }
 
-        /* RIWAYAT & NOTIF LIST */
-        .list-card { background: white; margin: 0 20px 15px; border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 15px; }
-        .list-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-
-        /* BOTTOM NAVIGATION */
-        .dock-nav { position: fixed; bottom: 20px; left: 20px; right: 20px; background: var(--dark); height: 75px; border-radius: 25px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 15px 45px rgba(0,0,0,0.4); z-index: 1000; }
-        .dock-link { color: rgba(255,255,255,0.3); font-size: 24px; transition: 0.3s; }
-        .dock-link.active { color: var(--primary); transform: translateY(-8px); }
-
-        /* MODAL CUSTOM SYSTEM */
-        #modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 20000; justify-content: center; align-items: center; padding: 25px; }
-        .modal-box { background: white; width: 100%; max-width: 320px; padding: 35px; border-radius: 35px; text-align: center; animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes popUp { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .modal-box input { width: 100%; text-align: center; font-size: 35px; letter-spacing: 12px; border: none; border-bottom: 3px solid var(--primary); margin: 20px 0; outline: none; }
-        .modal-box button { width: 100%; padding: 18px; border-radius: 15px; border: none; font-weight: 800; cursor: pointer; margin-top: 10px; }
-
-        /* TOAST EMAIL */
-        #otp-toast { position: fixed; top: -110px; left: 15px; right: 15px; background: rgba(10, 14, 23, 0.98); backdrop-filter: blur(15px); color: white; padding: 20px; border-radius: 22px; z-index: 99999; display: flex; align-items: center; gap: 15px; transition: 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        /* TOAST */
+        #otp-toast { position: fixed; top: -110px; left: 15px; right: 15px; background: #111; color: white; padding: 20px; border-radius: 20px; z-index: 99999; display: flex; align-items: center; gap: 15px; transition: 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55); border-left: 5px solid var(--primary); }
         #otp-toast.show { top: 15px; }
     </style>
 </head>
 <body>
 
-    <!-- 1. SPLASH SCREEN -->
+    <!-- 1. SPLASH -->
     <div id="splash">
-        <div class="logo-main" style="color: white; margin-bottom: 20px;">Sodium<span>Pay</span></div>
-        <div class="spinner"></div>
+        <h1 style="color:white; font-weight:900; letter-spacing:2px;">SODIUM<span>PAY</span></h1>
+        <div class="spin" style="margin-top:20px;"></div>
     </div>
 
     <!-- 2. OTP TOAST -->
     <div id="otp-toast">
-        <div style="width:45px; height:45px; background:var(--primary); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:20px;"><i class="fas fa-shield-halved"></i></div>
-        <div style="flex:1">
-            <p style="font-size:12px; font-weight:800; color:var(--primary);">KEAMANAN SODIUM</p>
-            <p id="otp-text" style="font-size:11px; opacity:0.9;">Memproses kode keamanan...</p>
+        <div style="background:var(--primary); width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center;"><i class="fas fa-key"></i></div>
+        <div>
+            <p style="font-size:10px; font-weight:800; opacity:0.6;">SECURITY SYSTEM</p>
+            <p id="otp-text" style="font-size:12px; font-weight:700;">Memuat kode...</p>
         </div>
     </div>
 
-    <!-- 3. MODAL SYSTEM -->
+    <!-- 3. GLOBAL MODAL -->
     <div id="modal-overlay">
-        <div class="modal-box" id="modal-content">
-            <i id="m-icon" class="fas fa-circle-xmark" style="font-size: 60px; color: var(--error);"></i>
+        <div class="modal">
+            <i id="m-icon" class="fas fa-circle-xmark" style="font-size:60px; color:var(--error);"></i>
             <h2 id="m-title" style="margin-top:20px;">Pesan</h2>
-            <p id="m-desc" style="color:#666; font-size:14px; margin-top:10px; line-height:1.6;"></p>
-            
-            <div id="admin-pin-view" style="display:none;">
-                <input type="password" id="pin-field" maxlength="4" placeholder="••••">
-                <button onclick="verifyAdmin()" style="background:var(--primary); color:white;">BUKA PANEL ADMIN</button>
+            <p id="m-desc" style="font-size:14px; margin-top:10px; opacity:0.7;"></p>
+            <div id="admin-area" style="display:none;">
+                <input type="password" id="admin-pin" placeholder="••••" style="width:100%; text-align:center; font-size:30px; letter-spacing:10px; border:none; border-bottom:2px solid var(--primary); margin:20px 0; outline:none; background:transparent;">
+                <button onclick="checkAdmin()" style="background:var(--primary); color:white;">UNLOCK ADMIN</button>
             </div>
-            
-            <button id="btn-close" onclick="closeModal()" style="background:var(--dark); color:white;">Tutup</button>
+            <button id="btn-close" onclick="closeM()" style="background:var(--dark); color:white;">Selesai</button>
         </div>
     </div>
 
     <!-- 4. PAGE: LOGIN -->
     <div id="page-login" class="page">
-        <div class="auth-card">
-            <div class="logo-main">Sodium<span>Pay</span></div>
-            <p style="text-align:center; color:var(--gray); margin-bottom:45px; font-size:14px;">Akses dompet masa depan kamu</p>
-            <div class="input-box"><label>EMAIL / USERNAME</label><input type="text" id="log-id" placeholder="han@gmail.com"></div>
-            <div class="input-box"><label>KATA SANDI</label><input type="password" id="log-pass" placeholder="••••••••"></div>
-            <button class="btn-action" onclick="handleLogin()">MASUK KE SODIUM</button>
-            <p style="text-align:center; margin-top:30px; font-size:14px; color:#666;">Member baru? <span onclick="showPage('page-reg')" style="color:var(--primary); font-weight:800; cursor:pointer;">Daftar Akun</span></p>
+        <div style="padding:60px 30px;">
+            <h1 style="font-size:35px; font-weight:900; color:var(--primary);">Sodium<span>Pay</span></h1>
+            <p style="color:var(--gray); margin-bottom:40px;">Satu aplikasi untuk semua kebutuhan digital.</p>
+            <div style="margin-bottom:20px;"><label style="font-size:10px; font-weight:800; color:var(--gray);">EMAIL</label><input type="email" id="l-email" style="width:100%; padding:20px; border-radius:18px; border:1px solid #ddd; margin-top:5px; outline:none;" placeholder="han@gmail.com"></div>
+            <div style="margin-bottom:30px;"><label style="font-size:10px; font-weight:800; color:var(--gray);">PASSWORD</label><input type="password" id="l-pass" style="width:100%; padding:20px; border-radius:18px; border:1px solid #ddd; margin-top:5px; outline:none;" placeholder="••••••••"></div>
+            <button onclick="doLogin()" style="width:100%; background:var(--primary); color:white; padding:20px; border:none; border-radius:20px; font-weight:800; font-size:16px;">MASUK SEKARANG</button>
+            <p style="text-align:center; margin-top:30px; font-size:14px;">Belum ada akun? <span onclick="showP('page-reg')" style="color:var(--primary); font-weight:800; cursor:pointer;">Daftar</span></p>
         </div>
     </div>
 
     <!-- 5. PAGE: REGISTER -->
     <div id="page-reg" class="page">
-        <div class="auth-card">
-            <div class="logo-main">Daftar<span>Sodium</span></div>
-            <p style="text-align:center; color:var(--gray); margin-bottom:40px; font-size:14px;">Nikmati transaksi tanpa batas sekarang</p>
-            <div class="input-box"><label>NAMA LENGKAP</label><input type="text" id="reg-name" placeholder="Hans"></div>
-            <div class="input-box"><label>EMAIL AKTIF</label><input type="email" id="reg-email" placeholder="contoh@gmail.com"></div>
-            <div class="input-box"><label>PASSWORD BARU</label><input type="password" id="reg-pass" placeholder="••••••••"></div>
-            <button class="btn-action" onclick="handleRegister()">BUAT AKUN GRATIS</button>
-            <p style="text-align:center; margin-top:30px; font-size:14px; color:#666;">Sudah punya akun? <span onclick="showPage('page-login')" style="color:var(--primary); font-weight:800; cursor:pointer;">Login</span></p>
+        <div style="padding:60px 30px;">
+            <h1 style="font-weight:900; font-size:30px;">Buat Akun</h1>
+            <p style="color:var(--gray); margin-bottom:40px;">Daftar gratis hanya dalam 1 menit.</p>
+            <div style="margin-bottom:15px;"><input type="text" id="r-name" placeholder="Nama Lengkap" style="width:100%; padding:20px; border-radius:18px; border:1px solid #ddd;"></div>
+            <div style="margin-bottom:15px;"><input type="email" id="r-email" placeholder="Email" style="width:100%; padding:20px; border-radius:18px; border:1px solid #ddd;"></div>
+            <div style="margin-bottom:30px;"><input type="password" id="r-pass" placeholder="Password" style="width:100%; padding:20px; border-radius:18px; border:1px solid #ddd;"></div>
+            <button onclick="doReg()" style="width:100%; background:var(--primary); color:white; padding:20px; border-radius:20px; font-weight:800;">DAFTAR AKUN</button>
+            <p style="text-align:center; margin-top:30px; font-size:14px;">Sudah punya? <span onclick="showP('page-login')" style="color:var(--primary); font-weight:800; cursor:pointer;">Login</span></p>
         </div>
     </div>
 
-    <!-- 6. PAGE: OTP -->
-    <div id="page-otp" class="page">
-        <div class="auth-card" style="text-align:center;">
-            <div class="logo-main">OTP Verifikasi</div>
-            <p style="color:var(--gray); margin-bottom:50px;">Kode dikirim ke notifikasi HP kamu</p>
-            <input type="number" id="otp-input" placeholder="0000" style="width:100%; text-align:center; font-size:50px; letter-spacing:15px; border:none; background:none; font-weight:800; outline:none;">
-            <button class="btn-action" onclick="confirmOTP()" style="margin-top:50px;">VERIFIKASI SEKARANG</button>
-        </div>
-    </div>
-
-    <!-- 7. PAGE: MAIN DASHBOARD -->
+    <!-- 6. PAGE: MAIN DASHBOARD -->
     <div id="page-main" class="page">
-        
-        <!-- TAB 1: HOME -->
-        <div id="tab-home" class="tab-content" style="display:block;">
-            <div class="dashboard-header">
-                <div class="user-badge" id="lbl-level">BASIC MEMBER</div>
-                <p style="opacity:0.8; font-size:13px; font-weight:600;">Sodium Total Balance</p>
-                <h1 id="lbl-balance" style="font-size:35px; letter-spacing:-1px; margin-top:5px;">Rp 1.500.000</h1>
-                <p style="margin-top:15px; font-weight:700;">Halo, <span id="lbl-user">Hans</span>! ⚡</p>
+        <div id="t-home" style="display:block;">
+            <div class="dash-header">
+                <div style="position:absolute; top:40px; right:25px; font-size:20px;" onclick="toggleTheme()"><i class="fas fa-moon"></i></div>
+                <p style="opacity:0.8; font-size:12px; font-weight:800;">CURRENT BALANCE</p>
+                <h1 id="b-val" style="font-size:38px; letter-spacing:-1px; margin-top:5px;">Rp 1.500.000</h1>
+                <p style="margin-top:15px; font-weight:700;">Halo, <span id="u-val">Han</span>! 👋 <span style="background:var(--orange); font-size:10px; padding:2px 8px; border-radius:10px; margin-left:5px;" id="l-val">Starter</span></p>
             </div>
 
-            <div class="balance-widget">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div><p style="font-size:10px; color:#999; font-weight:800; letter-spacing:1px;">POINTS</p><h3 style="color:var(--primary); font-weight:800;">4.250 SC</h3></div>
-                    <button onclick="comingSoon('Isi Saldo')" style="background:var(--primary); color:white; border:none; padding:12px 20px; border-radius:15px; font-weight:800; font-size:13px;">TOP UP</button>
-                </div>
-                <div class="quick-actions">
-                    <div class="action-item" onclick="comingSoon('Scan QR')"><i class="fas fa-qrcode"></i>SCAN</div>
-                    <div class="action-item" onclick="comingSoon('Transfer')"><i class="fas fa-paper-plane"></i>KIRIM</div>
-                    <div class="action-item" onclick="comingSoon('Minta Dana')"><i class="fas fa-hand-holding-dollar"></i>MINTA</div>
-                    <div class="action-item" onclick="comingSoon('E-Wallet')"><i class="fas fa-wallet"></i>E-WALLET</div>
+            <div style="padding:0 20px;">
+                <div class="v-card">
+                    <p style="font-size:10px; font-weight:800; opacity:0.7;">SODIUM VIRTUAL CARD</p>
+                    <h3 style="margin-top:20px; letter-spacing:4px;">**** **** **** 0902</h3>
+                    <div style="margin-top:40px; display:flex; justify-content:space-between; align-items:flex-end;">
+                        <div><p style="font-size:8px; opacity:0.6;">CARD HOLDER</p><p style="font-size:14px; font-weight:800;" id="uc-val">HAN</p></div>
+                        <i class="fab fa-cc-mastercard" style="font-size:30px;"></i>
+                    </div>
                 </div>
             </div>
 
-            <div class="promo-slider">
-                <div><h3 style="font-size:18px; font-weight:800;">KEJUTAN SODIUM!</h3><p style="font-size:11px; opacity:0.9; margin-top:5px;">Topup Diamond Game Cashback 90%<br>Hanya untuk pengguna setia.</p></div>
+            <div class="section-label"><p>Sodium Services</p><p style="color:var(--primary); font-size:12px;" onclick="wait('Full Menu')">Lainnya</p></div>
+            <div class="grid-box">
+                <div class="g-item" onclick="wait('Game')"><div class="g-icon"><i class="fas fa-gamepad"></i></div><span>GAME</span></div>
+                <div class="g-item" onclick="wait('Pulsa')"><div class="g-icon"><i class="fas fa-mobile-alt"></i></div><span>PULSA</span></div>
+                <div class="g-item" onclick="wait('Listrik')"><div class="g-icon"><i class="fas fa-bolt"></i></div><span>LISTRIK</span></div>
+                <div class="g-item" onclick="wait('E-Wallet')"><div class="g-icon"><i class="fas fa-wallet"></i></div><span>WALLET</span></div>
+                <div class="g-item" onclick="wait('Emas')"><div class="g-icon"><i class="fas fa-coins" style="color:gold"></i></div><span>EMAS</span></div>
+                <div class="g-item" onclick="wait('PayLater')"><div class="g-icon"><i class="fas fa-hand-holding-usd"></i></div><span>PAYLATER</span></div>
+                <div class="g-item" onclick="wait('Tiket')"><div class="g-icon"><i class="fas fa-plane"></i></div><span>TIKET</span></div>
+                <div class="g-item" onclick="wait('Donasi')"><div class="g-icon"><i class="fas fa-heart"></i></div><span>DONASI</span></div>
             </div>
 
-            <div class="service-grid">
-                <div class="service-item" onclick="comingSoon('Game')"><div class="service-icon"><i class="fas fa-gamepad"></i></div><span>GAME</span></div>
-                <div class="service-item" onclick="comingSoon('Pulsa')"><div class="service-icon"><i class="fas fa-mobile-alt"></i></div><span>PULSA</span></div>
-                <div class="service-item" onclick="comingSoon('PLN')"><div class="service-icon"><i class="fas fa-bolt"></i></div><span>PLN</span></div>
-                <div class="service-item" onclick="comingSoon('PDAM')"><div class="service-icon"><i class="fas fa-tint"></i></div><span>PDAM</span></div>
-                <div class="service-item" onclick="comingSoon('Data')"><div class="service-icon"><i class="fas fa-wifi"></i></div><span>DATA</span></div>
-                <div class="service-item" onclick="comingSoon('BPJS')"><div class="service-icon"><i class="fas fa-notes-medical"></i></div><span>BPJS</span></div>
-                <div class="service-item" onclick="comingSoon('Tiket')"><div class="service-icon"><i class="fas fa-plane"></i></div><span>TIKET</span></div>
-                <div class="service-item" onclick="comingSoon('Zakat')"><div class="service-icon"><i class="fas fa-mosque"></i></div><span>ZAKAT</span></div>
-            </div>
-            
-            <p style="padding:25px 25px 10px; font-weight:800; font-size:14px; color:var(--dark);">Berita Sodium Terbaru</p>
-            <div class="list-card">
-                <div class="list-icon" style="background:#e3f2fd; color:#1976d2;"><i class="fas fa-newspaper"></i></div>
-                <div><p style="font-size:13px; font-weight:800;">Update Keamanan v2.4</p><p style="font-size:11px; color:#888;">Sekarang SodiumPay lebih aman dengan enkripsi militer.</p></div>
+            <div class="section-label">Pengeluaran Kamu</div>
+            <div class="chart-box">
+                <div class="bar" style="height:40%"></div><div class="bar" style="height:70%"></div><div class="bar" style="height:30%"></div><div class="bar" style="height:90%"></div><div class="bar" style="height:50%"></div>
             </div>
         </div>
 
-        <!-- TAB 2: RIWAYAT -->
-        <div id="tab-history" class="tab-content" style="display:none; padding-top:40px;">
-            <p style="padding:0 25px 20px; font-weight:800; font-size:20px;">Riwayat Transaksi</p>
-            <div class="list-card">
-                <div class="list-icon" style="background:#fce4ec; color:#d81b60;"><i class="fas fa-gamepad"></i></div>
-                <div style="flex:1"><p style="font-size:13px; font-weight:800;">Top Up Mobile Legends</p><p style="font-size:11px; color:#888;">17 Mei 2026 - 15:30</p></div>
-                <p style="font-size:13px; font-weight:800; color:var(--error);">- Rp 50.000</p>
+        <div id="t-profile" style="display:none; padding:60px 20px;">
+            <div style="text-align:center;">
+                <img id="p-img" onclick="tap()" src="https://ui-avatars.com/api/?name=H&background=007AFF&color=fff" style="width:110px; border-radius:50%; border:5px solid var(--white); box-shadow:0 15px 30px rgba(0,0,0,0.1);">
+                <h2 style="margin-top:20px;" id="pn-val">Han</h2>
+                <p style="color:var(--gray); font-size:12px;">SODIUM ID: SDM-2026-991</p>
             </div>
-            <div class="list-card">
-                <div class="list-icon" style="background:#e8f5e9; color:#2e7d32;"><i class="fas fa-plus-circle"></i></div>
-                <div style="flex:1"><p style="font-size:13px; font-weight:800;">Isi Saldo (Topup)</p><p style="font-size:11px; color:#888;">16 Mei 2026 - 10:00</p></div>
-                <p style="font-size:13px; font-weight:800; color:var(--success);">+ Rp 100.000</p>
+            <div style="margin-top:40px; background:var(--white); border-radius:25px; overflow:hidden;">
+                <div style="padding:20px; border-bottom:1px solid #f5f5f5; display:flex; gap:15px; align-items:center;" onclick="wait('Voucher')"><i class="fas fa-ticket" style="color:var(--orange)"></i><p style="flex:1; font-weight:700;">Voucher Saya</p><i class="fas fa-chevron-right"></i></div>
+                <div style="padding:20px; border-bottom:1px solid #f5f5f5; display:flex; gap:15px; align-items:center;" onclick="wait('Referral')"><i class="fas fa-users" style="color:var(--primary)"></i><p style="flex:1; font-weight:700;">Ajak Teman (Referral)</p></div>
+                <div style="padding:20px; display:flex; gap:15px; align-items:center; color:var(--error);" onclick="logout()"><i class="fas fa-power-off"></i><p style="font-weight:700;">Keluar Aplikasi</p></div>
             </div>
         </div>
 
-        <!-- TAB 3: NOTIF -->
-        <div id="tab-notif" class="tab-content" style="display:none; padding-top:40px;">
-            <p style="padding:0 25px 20px; font-weight:800; font-size:20px;">Notifikasi</p>
-            <div class="list-card">
-                <div class="list-icon" style="background:#fff3e0; color:#ef6c00;"><i class="fas fa-gift"></i></div>
-                <div><p style="font-size:13px; font-weight:800;">Voucher Cashback Hangus!</p><p style="font-size:11px; color:#888;">Gunakan voucher belanja kamu sebelum jam 12 malam.</p></div>
-            </div>
-            <div class="list-card">
-                <div class="list-icon" style="background:#e1f5fe; color:#0288d1;"><i class="fas fa-info-circle"></i></div>
-                <div><p style="font-size:13px; font-weight:800;">Login Baru Terdeteksi</p><p style="font-size:11px; color:#888;">Seseorang masuk ke akun kamu dari perangkat iPhone 15.</p></div>
-            </div>
+        <div class="bottom-nav">
+            <div class="nav-tab active" onclick="tab('home',0)"><i class="fas fa-house"></i></div>
+            <div class="nav-tab" onclick="wait('Riwayat')"><i class="fas fa-history"></i></div>
+            <div class="nav-tab" onclick="wait('Inbox')"><i class="fas fa-bell"></i></div>
+            <div class="nav-tab" onclick="tab('profile',3)"><i class="fas fa-user-circle"></i></div>
         </div>
-
-        <!-- TAB 4: PROFIL -->
-        <div id="tab-profile" class="tab-content" style="display:none; padding-top:60px;">
-            <div style="text-align:center; padding:0 25px;">
-                <div style="position:relative; display:inline-block;">
-                    <img id="p-pic" onclick="triggerSecret()" src="https://ui-avatars.com/api/?name=H&background=007AFF&color=fff" style="width:110px; height:110px; border-radius:50%; border:4px solid white; box-shadow:0 15px 30px rgba(0,0,0,0.1); cursor:pointer;">
-                </div>
-                <h2 style="margin-top:15px; font-weight:800;" id="p-name">Hans</h2>
-                <p style="color:#888; font-size:12px; font-weight:700;">SODIUM ID: SDM-9920831</p>
-            </div>
-            
-            <div style="margin:40px 20px 0; background:white; border-radius:25px; overflow:hidden;">
-                <div onclick="comingSoon('Edit Profil')" style="padding:20px; display:flex; align-items:center; gap:15px; border-bottom:1px solid #f5f5f5;">
-                    <i class="fas fa-user-pen" style="color:var(--primary);"></i><p style="flex:1; font-weight:700;">Pengaturan Profil</p><i class="fas fa-chevron-right" style="color:#ccc; font-size:12px;"></i>
-                </div>
-                <div onclick="comingSoon('Security')" style="padding:20px; display:flex; align-items:center; gap:15px; border-bottom:1px solid #f5f5f5;">
-                    <i class="fas fa-shield-halved" style="color:var(--success);"></i><p style="flex:1; font-weight:700;">Kemanan Akun</p>
-                </div>
-                <div onclick="comingSoon('Bantuan')" style="padding:20px; display:flex; align-items:center; gap:15px; border-bottom:1px solid #f5f5f5;">
-                    <i class="fas fa-headset" style="color:var(--warning);"></i><p style="flex:1; font-weight:700;">Pusat Bantuan CS</p>
-                </div>
-                <div onclick="handleLogout()" style="padding:20px; display:flex; align-items:center; gap:15px;">
-                    <i class="fas fa-power-off" style="color:var(--error);"></i><p style="flex:1; font-weight:700; color:var(--error);">Keluar Aplikasi</p>
-                </div>
-            </div>
-        </div>
-
-        <nav class="dock-nav">
-            <div class="dock-link active" onclick="switchTab('home', 0)"><i class="fas fa-house"></i></div>
-            <div class="dock-link" onclick="switchTab('history', 1)"><i class="fas fa-clock-rotate-left"></i></div>
-            <div class="dock-link" onclick="switchTab('notif', 2)"><i class="fas fa-bell"></i></div>
-            <div class="dock-link" onclick="switchTab('profile', 3)"><i class="fas fa-user-large"></i></div>
-        </nav>
     </div>
 
-    <!-- 8. PAGE: ADMIN DASHBOARD (SECRET) -->
+    <!-- 7. PAGE: ADMIN (SECRET) -->
     <div id="page-admin" class="page">
-        <div style="padding:30px;">
-            <h2 style="color:var(--primary); font-weight:800; font-size:26px;">Titan Admin</h2>
-            <p style="color:#777; font-size:12px; margin-bottom:35px;">Akses khusus Han untuk kontrol penuh Sodium.</p>
+        <div style="padding:40px 25px;">
+            <h1 style="color:var(--primary);">God Mode Admin</h1>
+            <p style="font-size:12px; margin-bottom:40px;">Edit data sistem SodiumPay secara real-time.</p>
+            <div style="background:#eee; padding:20px; border-radius:20px; margin-bottom:20px;">
+                <p style="font-weight:800; font-size:13px; margin-bottom:10px;">GANTI SALDO USER</p>
+                <input type="number" id="adm-bal" style="width:100%; padding:15px; border-radius:10px; border:none;" placeholder="Nominal">
+                <button onclick="saveBal()" style="background:var(--primary); color:white; width:100%; border:none; padding:15px; border-radius:10px; font-weight:800; margin-top:10px;">UPDATE SALDO</button>
+            </div>
+            <div style="background:#eee; padding:20px; border-radius:20px;">
+                <p style="font-weight:800; font-size:13px; margin-bottom:10px;">UBAH LEVEL MEMBER</p>
+                <select id="adm-lvl" style="width:100%; padding:15px; border-radius:10px; border:none; font-weight:800;">
+                    <option>SILVER</option><option>GOLD</option><option>PLATINUM</option><option>GOD MODE</option>
+                </select>
+                <button onclick="saveLvl()" style="background:var(--dark); color:white; width:100%; border:none; padding:15px; border-radius:10px; font-weight:800; margin-top:10px;">UPDATE LEVEL</button>
+            </div>
+            <button onclick="showP('page-main')" style="width:100%; padding:20px; background:#333; color:white; border:none; border-radius:20px; margin-top:40px; font-weight:800;">BACK TO APP</button>
+        </div>
+    </div>
+
+    <script>
+        let genOTP = "";
+        let taps = 0;
+        const ADMIN_PIN = "0902";
+
+        window.onload = () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash');
+                if(localStorage.getItem('isLog') === 'true') {
+                    refresh(); showP('page-main');
+                } else {
+                    showP('page-login');
+                }
+                splash.style.opacity = '0';
+                setTimeout(() => splash.style.display = 'none', 800);
+            }, 2000);
+        };
+
+        function showP(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function pop(title, desc, type = 'error', isAdmin = false) {
+            const overlay = document.getElementById('modal-overlay');
+            document.getElementById('m-title').innerText = title;
+            document.getElementById('m-desc').innerText = desc;
+            const icon = document.getElementById('m-icon');
+            if(type === 'error') { icon.className = "fas fa-circle-xmark"; icon.style.color = "var(--error)"; }
+            else if(type === 'success') { icon.className = "fas fa-circle-check"; icon.style.color = "var(--success)"; }
+            else { icon.className = "fas fa-shield-halved"; icon.style.color = "var(--primary)"; }
             
-            <div style="background:#eef2f7; padding:25px; border-radius:25px; margin-bottom:20px;">
-                <p style="font-weight:800; font-size:13px; margin-bottom:12px;">MODIFIKASI SALDO
+            document.getElementById('admin-area').style.display = isAdmin ? 'block' : 'none';
+            document.getElementById('btn-close').style.display = isAdmin ? 'none' : 'block';
+            overlay.style.display = 'flex';
+        }
+
+        function closeM() { document.getElementById('modal-overlay').style.display = 'none'; }
+
+        function doReg() {
+            const n = document.getElementById('r-name').value;
+            const e = document.getElementById('r-email').value;
+            const p = document.getElementById('r-pass').value;
+            if(!n || !e || !p) return pop("Gagal", "Data tidak lengkap!", "error");
+            
+            localStorage.setItem('u_name', n);
+            localStorage.setItem('u_email', e);
+            localStorage.setItem('u_pass', p);
+            localStorage.setItem('u_bal', "1500000");
+            localStorage.setItem('u_lvl', "Starter");
+
+            genOTP = Math.floor(1000 + Math.random() * 9000).toString();
+            setTimeout(() => {
+                document.getElementById('otp-text').innerText = "KODE OTP: " + genOTP;
+                document.getElementById('otp-toast').classList.add('show');
+                setTimeout(() => document.getElementById('otp-toast').classList.remove('show'), 10000);
+            }, 1000);
+            pop("OTP Terkirim", "Cek notifikasi HP kamu sekarang.", "success");
+            showP('page-login');
+        }
+
+        function doLogin() {
+            const e = document.getElementById('l-email').value;
+            const p = document.getElementById('l-pass').value;
+            if(e === localStorage.getItem('u_email') && p === localStorage.getItem('u_pass')) {
+                localStorage.setItem('isLog', 'true');
+                refresh(); showP('page-main');
+            } else {
+                pop("Ditolak", "Email atau Password salah!", "error");
+            }
+        }
+
+        function refresh() {
+            const name = localStorage.getItem('u_name');
+            const bal = localStorage.getItem('u_bal');
+            const lvl = localStorage.getItem('u_lvl');
+            document.getElementById('u-val').innerText = name;
+            document.getElementById('uc-val').innerText = name.toUpperCase();
+            document.getElementById('pn-val').innerText = name;
+            document.getElementById('l-val').innerText = lvl;
+            document.getElementById('b-val').innerText = "Rp " + parseInt(bal).toLocaleStri
