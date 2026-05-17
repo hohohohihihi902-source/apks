@@ -281,4 +281,45 @@
             document.getElementById('uc-val').innerText = name.toUpperCase();
             document.getElementById('pn-val').innerText = name;
             document.getElementById('l-val').innerText = lvl;
-            document.getElementById('b-val').innerText = "Rp " + parseInt(bal).toLocaleStri
+            document.getElementById('b-val').innerText = "Rp " + parseInt(bal).toLocaleString();
+        }
+
+        function tap() {
+            taps++;
+            if(taps === 5) {
+                taps = 0;
+                pop("Admin Access", "Konfirmasi PIN Master Han", "info", true);
+            }
+        }
+
+        function checkAdmin() {
+            if(document.getElementById('admin-pin').value === ADMIN_PIN) {
+                closeM(); showP('page-admin');
+            } else {
+                pop("Ditolak", "PIN Admin Salah!", "error");
+            }
+        }
+
+        function saveBal() {
+            localStorage.setItem('u_bal', document.getElementById('adm-bal').value);
+            refresh(); pop("Berhasil", "Saldo user diperbarui!", "success");
+        }
+
+        function saveLvl() {
+            localStorage.setItem('u_lvl', document.getElementById('adm-lvl').value);
+            refresh(); pop("Berhasil", "Level user diperbarui!", "success");
+        }
+
+        function tab(t, i) {
+            document.getElementById('t-home').style.display = t === 'home' ? 'block' : 'none';
+            document.getElementById('t-profile').style.display = t === 'profile' ? 'block' : 'none';
+            document.querySelectorAll('.nav-tab').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.nav-tab')[i].classList.add('active');
+        }
+
+        function toggleTheme() { document.body.classList.toggle('dark-mode'); }
+        function logout() { localStorage.setItem('isLog', 'false'); location.reload(); }
+        function wait(n) { pop("Sabar!", "Fitur " + n + " Coming Soon", "error"); }
+    </script>
+</body>
+</html>
