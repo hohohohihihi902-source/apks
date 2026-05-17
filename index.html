@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SodiumPay - Future Payment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #007AFF; /* Electric Blue */
+            --secondary: #0047AB;
+            --dark: #0A0E17; /* Navy Gelap */
+            --bg: #F8FAFC;
+            --white: #FFFFFF;
+            --glass: rgba(255, 255, 255, 0.8);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        body { background-color: var(--bg); color: var(--dark); padding-bottom: 90px; }
+
+        /* HEADER & SALDO */
+        .header-top {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            padding: 30px 20px 80px 20px;
+            color: white;
+            border-bottom-right-radius: 40px;
+            border-bottom-left-radius: 40px;
+        }
+
+        .brand-name { font-size: 22px; font-weight: 800; letter-spacing: 1px; }
+        .brand-name span { color: #87CEEB; } 
+
+        .user-greet { margin-top: 15px; display: flex; align-items: center; gap: 10px; }
+        .avatar { width: 45px; height: 45px; border-radius: 50%; border: 2px solid white; }
+
+        /* FLOATING BALANCE CARD */
+        .balance-card {
+            background: var(--white);
+            margin: -50px 20px 0 20px;
+            padding: 20px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .balance-info p { font-size: 12px; color: #777; font-weight: 600; }
+        .balance-info h2 { font-size: 20px; font-weight: 800; color: var(--dark); }
+
+        .btn-topup {
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+        }
+
+        /* MENU SECTION */
+        .section-container { padding: 25px 20px 0 20px; }
+        .section-title { font-size: 16px; font-weight: 800; margin-bottom: 15px; color: var(--dark); }
+
+        .grid-menu {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px 10px;
+        }
+
+        .menu-box {
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .icon-circle {
+            width: 55px;
+            height: 55px;
+            background: var(--white);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            font-size: 22px;
+            color: var(--primary);
+            border: 1px solid #f0f0f0;
+        }
+
+        .menu-box:active { transform: scale(0.9); }
+        .menu-box span { font-size: 11px; font-weight: 700; color: #444; text-align: center; }
+
+        /* PROMO BANNER */
+        .banner {
+            width: 100%;
+            height: 140px;
+            background: url('https://img.freepik.com/free-vector/digital-technology-blue-banner-with-light-effect_1017-31050.jpg') center/cover;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* BOTTOM NAV */
+        .bottom-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: var(--dark);
+            height: 65px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .nav-link { color: rgba(255, 255, 255, 0.5); text-decoration: none; font-size: 20px; transition: 0.3s; }
+        .nav-link.active { color: var(--primary); transform: translateY(-5px); }
+        
+    </style>
+</head>
+<body>
+
+    <!-- TOP AREA -->
+    <div class="header-top">
+        <div class="brand-name">Sodium<span>Pay</span></div>
+        <div class="user-greet">
+            <img src="https://ui-avatars.com/api/?name=han&background=fff&color=007AFF" class="avatar">
+            <div>
+                <p style="font-size: 12px; opacity: 0.8;">Selamat Datang,</p>
+                <p style="font-weight: 700;">han</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- BALANCE AREA -->
+    <div class="balance-card">
+        <div class="balance-info">
+            <p>Sodium Balance</p>
+            <h2>Rp 1.250.000</h2>
+        </div>
+        <a href="#" class="btn-topup">+ TOPUP</a>
+    </div>
+
+    <!-- BANNER PROMO -->
+    <div class="section-container">
+        <div class="banner"></div>
+    </div>
+
+    <!-- MAIN SERVICES -->
+    <div class="section-container">
+        <div class="section-title">Sodium Games</div>
+        <div class="grid-menu">
+            <a href="#" class="menu-box">
+                <div class="icon-circle"><i class="fas fa-gamepad"></i></div>
+                <span>MLBB</span>
+            </a>
+            <a href="#" class="menu-box">
+                <div class="icon-circle"><i class="fas fa-fire"></i></div>
+                <span>Free Fire</span>
+            </a>
+            <a href="#" class="menu-box">
+                <div class="icon-circle"><i class="fas fa-gun"></i></div>
+                <span>PUBG</span>
+            </a>
+            <a href="#" class="menu-box">
+                <div class="icon-circle"><i class="fas fa-grid-2"></i></div>
+                <span>Lainnya</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- BILLS -->
+    <div class="section-container">
+        <div class="section-title">Sodium Bills</div>
+        <div class="grid-menu">
+            <a href="#" class="menu-box">
+                <div class="icon-circle"><i class="fas fa-bolt"></i></div>
+                <span>PLN</span>
+            </a>
+            <a href="#" class="menu-box">
+                <div class="icon-circle"><i class="fas fa-tint"></i></div>
+                <span>PDAM</span>
+            </a>
+            <a href="#" class="menu-box">
+                <div class="icon-circle"><i class="fas fa-wifi"></i></div>
+                <span>Internet</span>
+            </a>
+            <a href="#" class="menu-box">
+                <div class="icon-circle"><i class="fas fa-phone"></i></div>
+                <span>Pulsa</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-link active"><i class="fas fa-home"></i></a>
+        <a href="#" class="nav-link"><i class="fas fa-history"></i></a>
+        <a href="#" class="nav-link"><i class="fas fa-bell"></i></a>
+        <a href="#" class="nav-link"><i class="fas fa-user-circle"></i></a>
+    </nav>
+
+</body>
+</html>
