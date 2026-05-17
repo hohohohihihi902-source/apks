@@ -3,201 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SodiumPay - Secure System</title>
+    <title>SodiumPay - Elite Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        :root { --primary: #007AFF; --dark: #0A0E17; --bg: #F8FAFC; --white: #FFFFFF; --error: #FF3B30; }
+        :root { --primary: #007AFF; --dark: #0A0E17; --bg: #F8FAFC; --white: #FFFFFF; --error: #FF3B30; --gray: #94A3B8; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--dark); overflow: hidden; }
+        body { background-color: var(--bg); color: var(--dark); overflow: hidden; height: 100vh; }
 
-        /* LAYOUT PAGES */
-        .page { display: none; min-height: 100vh; position: absolute; width: 100%; top: 0; background: var(--bg); }
-        .page.active { display: block; animation: slideUp 0.4s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* NOTIF OTP */
+        #email-toast { position: fixed; top: -100px; left: 15px; right: 15px; background: rgba(10, 14, 23, 0.95); backdrop-filter: blur(10px); color: white; padding: 18px; border-radius: 20px; z-index: 10000; display: flex; align-items: center; gap: 15px; transition: 0.6s ease; }
+        #email-toast.show { top: 15px; }
 
-        /* FORM STYLES */
-        .auth-card { padding: 40px 25px; }
-        .logo-box { font-size: 28px; font-weight: 800; color: var(--primary); margin-bottom: 30px; text-align: center; }
-        .input-box { margin-bottom: 18px; }
-        .input-box label { display: block; font-size: 12px; font-weight: 800; margin-bottom: 8px; color: #666; }
-        .input-box input { width: 100%; padding: 16px; border-radius: 12px; border: 1.5px solid #DDD; font-size: 14px; transition: 0.3s; }
-        .input-box input:focus { border-color: var(--primary); outline: none; }
+        /* PAGE SYSTEM */
+        .page { display: none; min-height: 100vh; position: absolute; width: 100%; top: 0; background: var(--bg); overflow-y: auto; padding-bottom: 100px; }
+        .page.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .btn-full { width: 100%; background: var(--primary); color: white; padding: 18px; border-radius: 12px; border: none; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 10px; }
-        
-        /* CUSTOM MODAL (Pengganti Alert) */
-        #custom-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center; padding: 20px;
-        }
-        .modal-box { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 100%; max-width: 320px; }
-        .modal-box i { font-size: 50px; color: var(--primary); margin-bottom: 15px; }
-        .modal-box button { background: var(--dark); color: white; border: none; padding: 12px 25px; border-radius: 10px; margin-top: 20px; font-weight: 700; width: 100%; }
+        /* AUTH UI */
+        .container { padding: 40px 25px; }
+        .logo { font-size: 30px; font-weight: 800; text-align: center; margin-bottom: 40px; color: var(--primary); }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 11px; font-weight: 800; color: #888; margin-bottom: 8px; }
+        .input-group input { width: 100%; padding: 18px; border-radius: 15px; border: 1.5px solid #E2E8F0; background: white; font-size: 15px; outline: none; }
+        .btn-main { width: 100%; background: var(--primary); color: white; padding: 20px; border-radius: 15px; border: none; font-size: 16px; font-weight: 700; cursor: pointer; }
 
-        /* DASHBOARD (SIMPLE VERSION FOR TESTING) */
-        .header { background: var(--primary); padding: 30px 20px 60px; color: white; border-radius: 0 0 30px 30px; }
-        .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; padding: 20px; margin-top: -30px; }
-        .menu-item { background: white; padding: 15px; border-radius: 15px; text-align: center; box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
-        .menu-item i { font-size: 24px; color: var(--primary); margin-bottom: 8px; display: block; }
-        .menu-item span { font-size: 10px; font-weight: 700; }
+        /* DASHBOARD UI */
+        .header { background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%); padding: 40px 25px 80px; color: white; border-radius: 0 0 40px 40px; }
+        .balance-box { background: white; margin: -50px 20px 0; padding: 20px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; }
+        .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 10px; padding: 20px; }
+        .menu-icon { width: 55px; height: 55px; background: white; border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.04); font-size: 22px; color: var(--primary); border: 1px solid #f3f3f3; }
+        .menu-item span { font-size: 10px; font-weight: 700; color: #444; display: block; text-align: center; }
+
+        /* MODAL CUSTOM (FIX: X MERAH UNTUK COMING SOON) */
+        #modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 20000; justify-content: center; align-items: center; padding: 25px; }
+        .modal { background: white; width: 100%; max-width: 320px; padding: 35px; border-radius: 30px; text-align: center; }
+        .modal i { font-size: 60px; margin-bottom: 20px; }
+        .modal button { width: 100%; background: var(--dark); color: white; border: none; padding: 18px; border-radius: 15px; margin-top: 25px; font-weight: 700; }
+
+        /* BOTTOM NAV */
+        .bottom-nav { position: fixed; bottom: 20px; left: 20px; right: 20px; background: var(--dark); height: 70px; border-radius: 22px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.4); z-index: 1000; }
+        .nav-link { color: rgba(255,255,255,0.3); font-size: 24px; cursor: pointer; }
+        .nav-link.active { color: var(--primary); }
+
+        /* ADMIN PANEL UI */
+        .admin-card { background: #eef2f7; padding: 20px; border-radius: 20px; margin-bottom: 15px; }
+        .admin-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ccc; margin: 10px 0; }
     </style>
 </head>
 <body>
 
-    <!-- 1. PAGE REGISTER -->
-    <div id="page-register" class="page active">
-        <div class="auth-card">
-            <div class="logo-box">Sodium<span>Pay</span></div>
-            <div class="input-box">
-                <label>NAMA LENGKAP</label>
-                <input type="text" id="reg-name" placeholder="Nama Kamu">
-            </div>
-            <div class="input-box">
-                <label>EMAIL</label>
-                <input type="email" id="reg-email" placeholder="email@gmail.com">
-            </div>
-            <div class="input-box">
-                <label>PASSWORD</label>
-                <input type="password" id="reg-pass" placeholder="••••••••">
-            </div>
-            <button class="btn-full" onclick="handleRegister()">DAFTAR</button>
-        </div>
-    </div>
-
-    <!-- 2. PAGE OTP (SIMULASI) -->
-    <div id="page-otp" class="page">
-        <div class="auth-card" style="text-align:center;">
-            <div class="logo-box">Verifikasi</div>
-            <p style="color:#666; margin-bottom:30px;">Masukkan kode OTP yang dikirim ke email kamu</p>
-            <div class="input-box">
-                <input type="number" id="otp-input" placeholder="0 0 0 0" style="text-align:center; font-size:30px; letter-spacing:10px;">
-            </div>
-            <button class="btn-full" onclick="handleVerifyOTP()">VERIFIKASI</button>
-            <p style="margin-top:20px; font-size:12px; color:var(--primary); font-weight:700;">Kirim Ulang Kode (60s)</p>
-        </div>
-    </div>
-
-    <!-- 3. PAGE LOGIN -->
-    <div id="page-login" class="page">
-        <div class="auth-card">
-            <div class="logo-box">Sodium<span>Pay</span></div>
-            <div class="input-box">
-                <label>EMAIL</label>
-                <input type="email" id="login-email" placeholder="email@gmail.com">
-            </div>
-            <div class="input-box">
-                <label>PASSWORD</label>
-                <input type="password" id="login-pass" placeholder="••••••••">
-            </div>
-            <button class="btn-full" onclick="handleLogin()">MASUK</button>
-        </div>
-    </div>
-
-    <!-- 4. PAGE MAIN DASHBOARD -->
-    <div id="page-main" class="page">
-        <div class="header">
-            <p>Saldo Sodium</p>
-            <h1 id="user-balance">Rp 1.500.000</h1>
-            <p style="margin-top:10px; font-weight:700;">Halo, <span id="user-display">User</span>!</p>
-        </div>
-        <div class="menu-grid">
-            <div class="menu-item" onclick="comingSoon('Top Up Game')"><i class="fas fa-gamepad"></i><span>Game</span></div>
-            <div class="menu-item" onclick="comingSoon('Pulsa')"><i class="fas fa-mobile-alt"></i><span>Pulsa</span></div>
-            <div class="menu-item" onclick="comingSoon('Listrik')"><i class="fas fa-bolt"></i><span>PLN</span></div>
-            <div class="menu-item" onclick="comingSoon('E-Wallet')"><i class="fas fa-wallet"></i><span>Wallet</span></div>
-        </div>
-    </div>
-
-    <!-- CUSTOM MODAL HTML -->
-    <div id="custom-modal">
-        <div class="modal-box">
-            <i id="modal-icon" class="fas fa-check-circle"></i>
-            <h3 id="modal-title">Berhasil!</h3>
-            <p id="modal-msg" style="margin-top:10px; color:#666; font-size:14px;"></p>
+    <!-- MODAL CUSTOM -->
+    <div id="modal-overlay">
+        <div class="modal">
+            <i id="m-icon" class="fas fa-times-circle" style="color: var(--error);"></i>
+            <h2 id="m-title">Sabar!</h2>
+            <p id="m-text" style="color:#666; font-size:14px; margin-top:10px;">Coming Soon</p>
             <button onclick="closeModal()">Tutup</button>
         </div>
     </div>
 
-    <script>
-        // FUNGSI MODAL CUSTOM (Ganti Alert)
-        function showModal(title, msg, type = 'success') {
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-msg').innerText = msg;
-            const icon = document.getElementById('modal-icon');
-            if(type === 'error') {
-                icon.className = "fas fa-times-circle";
-                icon.style.color = "var(--error)";
-            } else {
-                icon.className = "fas fa-check-circle";
-                icon.style.color = "var(--primary)";
-            }
-            document.getElementById('custom-modal').style.display = 'flex';
-        }
+    <!-- NOTIF OTP -->
+    <div id="email-toast">
+        <div style="width:40px; height:40px; background:var(--primary); border-radius:12px; display:flex; align-items:center; justify-content:center;"><i class="fas fa-envelope" style="color:white"></i></div>
+        <div style="flex:1">
+            <p style="font-size:11px; font-weight:800;">SodiumPay Security</p>
+            <p id="otp-msg" style="font-size:10px; opacity:0.8;">Memuat OTP...</p>
+        </div>
+    </div>
 
-        function closeModal() {
-            document.getElementById('custom-modal').style.display = 'none';
-        }
+    <!-- PAGE: REGISTER -->
+    <div id="page-reg" class="page active">
+        <div class="container">
+            <div class="logo">Sodium<span>Pay</span></div>
+            <div class="input-group"><label>NAMA</label><input type="text" id="reg-name" placeholder="han"></div>
+            <div class="input-group"><label>EMAIL</label><input type="email" id="reg-email" placeholder="han@gmail.com"></div>
+            <div class="input-group"><label>PASSWORD</label><input type="password" id="reg-pass" placeholder="••••••••"></div>
+            <button class="btn-main" onclick="startReg()">DAFTAR SEKARANG</button>
+        </div>
+    </div>
+
+    <!-- PAGE: OTP -->
+    <div id="page-otp" class="page">
+        <div class="container" style="text-align:center;">
+            <div class="logo" style="margin-top:40px;">OTP Verifikasi</div>
+            <p style="color:#888; margin-bottom:40px;">Cek notif di atas HP kamu.</p>
+            <input type="number" id="otp-val" placeholder="0000" style="width:100%; text-align:center; font-size:40px; letter-spacing:15px; border:none; background:none; font-weight:800; outline:none;">
+            <button class="btn-main" onclick="verifyOTP()" style="margin-top:40px;">VERIFIKASI</button>
+        </div>
+    </div>
+
+    <!-- PAGE: LOGIN -->
+    <div id="page-login" class="page">
+        <div class="container">
+            <div class="logo">Sodium<span>Pay</span></div>
+            <div class="input-group"><label>EMAIL</label><input type="email" id="log-email" placeholder="han@gmail.com"></div>
+            <div class="input-group"><label>PASSWORD</label><input type="password" id="log-pass" placeholder="••••••••"></div>
+            <button class="btn-main" onclick="startLogin()">MASUK</button>
+        </div>
+    </div>
+
+    <!-- PAGE: MAIN DASHBOARD -->
+    <div id="page-main" class="page">
+        <div id="tab-home" class="tab-content active">
+            <div class="header">
+                <p style="opacity:0.8;">Saldo Sodium</p>
+                <h1 id="lbl-balance" style="font-size:32px;">Rp 1.500.000</h1>
+                <p style="margin-top:15px; font-weight:700;">Halo, <span id="lbl-name">han</span>! 👋</p>
+            </div>
+            <div class="balance-box">
+                <div><p style="font-size:10px; color:#999;">Sodium Coins</p><h3 style="color:var(--primary);">1.250 SC</h3></div>
+                <button onclick="comingSoon('Top Up')" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:12px; font-weight:700;">+ TOPUP</button>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-item" onclick="comingSoon('Game')"><div class="menu-icon"><i class="fas fa-gamepad"></i></div><span>GAME</span></div>
+                <div class="menu-item" onclick="comingSoon('Pulsa')"><div class="menu-icon"><i class="fas fa-mobile-alt"></i></div><span>PULSA</span></div>
+                <div class="menu-item" onclick="comingSoon('PLN')"><div class="menu-icon"><i class="fas fa-bolt"></i></div><span>PLN</span></div>
+                <div class="menu-item" onclick="comingSoon('E-Wallet')"><div class="menu-icon"><i class="fas fa-wallet"></i></div><span>WALLET</span></div>
+                <div class="menu-item" onclick="comingSoon('Data')"><div class="menu-icon"><i class="fas fa-wifi"></i></div><span>DATA</span></div>
+                <div class="menu-item" onclick="comingSoon('PDAM')"><div class="menu-icon"><i class="fas fa-tint"></i></div><span>PDAM</span></div>
+                <div class="menu-item" onclick="comingSoon('BPJS')"><div class="menu-icon"><i class="fas fa-hospital"></i></div><span>BPJS</span></div>
+                <div class="menu-item" onclick="comingSoon('Lainnya')"><div class="menu-icon"><i class="fas fa-th"></i></div><span>LAINNYA</span></div>
+            </div>
+        </div>
+
+        <div id="tab-profile" class="tab-content" style="display:none; padding:20px;">
+            <div style="text-align:center; padding:40px 0;">
+                <img src="https://ui-avatars.com/api/?name=han&background=007AFF&color=fff" style="width:90px; border-radius:50%; border:3px solid white;">
+                <h2 style="margin-top:10px;" id="lbl-profile-name">han</h2>
+                <p style="color:#888;">ID: SDM-9928</p>
+            </div>
+            <button onclick="askAdmin()" style="width:100%; background:#222; color:white; border:none; padding:18px; border-radius:15px; font-weight:800; margin-bottom:15px;"><i class="fas fa-user-shield"></i> PANEL ADMIN RAHASIA</button>
+            <button onclick="location.reload()" style="width:100%; background:var(--error); color:white; border:none; padding:18px; border-radius:15px; font-weight:800;"><i class="fas fa-sign-out-alt"></i> KELUAR</button>
+        </div>
+
+        <nav class="bottom-nav">
+            <div class="nav-link active" onclick="switchTab('home')"><i class="fas fa-home"></i></div>
+            <div class="nav-link" onclick="comingSoon('Riwayat')"><i class="fas fa-history"></i></div>
+            <div class="nav-link" onclick="comingSoon('Pesan')"><i class="fas fa-comment-dots"></i></div>
+            <div class="nav-link" onclick="switchTab('profile')"><i class="fas fa-user-circle"></i></div>
+        </nav>
+    </div>
+
+    <!-- PAGE: ADMIN DASHBOARD -->
+    <div id="page-admin" class="page">
+        <div style="padding:25px;">
+            <h2 style="color:var(--primary);">Master Admin Panel</h2>
+            <p style="color:#777; font-size:12px; margin-bottom:20px;">Halo Han, kendalikan semuanya di sini.</p>
+            
+            <div class="admin-card">
+                <p style="font-weight:700;">Ubah Saldo User</p>
+                <input type="number" id="adm-bal" class="admin-input" placeholder="Masukkan Angka">
+                <button onclick="saveBal()" style="background:var(--primary); color:white; width:100%; border:none; padding:12px; border-radius:10px; font-weight:700;">UPDATE SALDO</button>
+            </div>
+
+            <div class="admin-card">
+                <p style="font-weight:700;">Data User Sekarang</p>
+                <div id="adm-data" style="font-size:12px; color:#555; background:white; padding:10px; border-radius:10px; margin-top:10px; line-height:1.6;"></div>
+            </div>
+
+            <button class="btn-main" onclick="showPage('page-main')" style="background:#222; margin-top:20px;">BALIK KE APLIKASI</button>
+        </div>
+    </div>
+
+    <script>
+        let generatedOTP = "";
+        const MASTER_PIN = "0902"; // <== GANTI INI DENGAN PIN RAHASIA KAMU (CONTOH: Tgl Lahir)
 
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
 
-        // LOGIKA DAFTAR
-        function handleRegister() {
-            const name = document.getElementById('reg-name').value;
-            const email = document.getElementById('reg-email').value;
-            const pass = document.getElementById('reg-pass').value;
-
-            if(!name || !email || !pass) {
-                showModal('Waduh!', 'Isi semua data dulu bos.', 'error');
-                return;
-            }
-
-            // SIMPAN DATA KE STORAGE
-            localStorage.setItem('user_name', name);
-            localStorage.setItem('user_email', email);
-            localStorage.setItem('user_pass', pass);
-
-            showModal('Sukses!', 'OTP dikirim ke ' + email);
-            setTimeout(() => { showPage('page-otp'); }, 1500);
-        }
-
-        // LOGIKA OTP
-        function handleVerifyOTP() {
-            const otp = document.getElementById('otp-input').value;
-            if(otp === "1234") { // Simulasi Kode OTP 1234
-                showModal('Berhasil!', 'Akun kamu aktif. Silakan login.');
-                setTimeout(() => { showPage('page-login'); }, 1500);
+        // MODAL SYSTEM (Bisa Success / Error)
+        function popModal(title, text, isError = false) {
+            document.getElementById('m-title').innerText = title;
+            document.getElementById('m-text').innerText = text;
+            const icon = document.getElementById('m-icon');
+            if(isError) {
+                icon.className = "fas fa-times-circle"; icon.style.color = "var(--error)";
             } else {
-                showModal('OTP Salah', 'Coba masukkan kode 1234 (Simulasi)', 'error');
+                icon.className = "fas fa-check-circle"; icon.style.color = "#2ECC71";
             }
+            document.getElementById('modal-overlay').style.display = 'flex';
         }
 
-        // LOGIKA LOGIN (ANTI BYPASS)
-        function handleLogin() {
-            const emailInput = document.getElementById('login-email').value;
-            const passInput = document.getElementById('login-pass').value;
+        function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
 
-            const savedEmail = localStorage.getItem('user_email');
-            const savedPass = localStorage.getItem('user_pass');
-            const savedName = localStorage.getItem('user_name');
+        function startReg() {
+            const n = document.getElementById('reg-name').value;
+            const e = document.getElementById('reg-email').value;
+            const p = document.getElementById('reg-pass').value;
+            if(!n || !e || !p) return popModal("Gagal", "Lengkapi datanya dulu!", true);
 
-            // PENGECEKAN DATA
-            if(emailInput === savedEmail && passInput === savedPass) {
-                document.getElementById('user-display').innerText = savedName;
-                showModal('Welcome!', 'Berhasil masuk ke SodiumPay');
-                setTimeout(() => { showPage('page-main'); }, 1500);
+            localStorage.setItem('u_name', n);
+            localStorage.setItem('u_email', e);
+            localStorage.setItem('u_pass', p);
+            localStorage.setItem('u_bal', "1500000");
+
+            generatedOTP = Math.floor(1000 + Math.random() * 9000).toString();
+            setTimeout(() => {
+                document.getElementById('otp-msg').innerText = "KODE OTP SODIUM KAMU: " + generatedOTP;
+                document.getElementById('email-toast').classList.add('show');
+                setTimeout(() => document.getElementById('email-toast').classList.remove('show'), 8000);
+            }, 1000);
+            showPage('page-otp');
+        }
+
+        function verifyOTP() {
+            if(document.getElementById('otp-val').value === generatedOTP) {
+                popModal("Sukses", "Akun aktif! Silakan Login.");
+                showPage('page-login');
             } else {
-                showModal('Gagal Login', 'Email atau Password tidak cocok dengan data daftar!', 'error');
+                popModal("Gagal", "OTP yang kamu masukkan salah!", true);
             }
         }
 
-        // FIX TOMBOL DASHBOARD
-        function comingSoon(service) {
-            showModal('Sabar!', 'Fitur ' + service + ' lagi dibangun sama Han.', 'success');
+        function startLogin() {
+            const e = document.getElementById('log-email').value;
+            const p = document.getElementById('log-pass').value;
+            if(e === localStorage.getItem('u_email') && p === localStorage.getItem('u_pass')) {
+                document.getElementById('lbl-name').innerText = localStorage.getItem('u_name');
+                document.getElementById('lbl-profile-name').innerText = localStorage.getItem('u_name');
+                updateDisplayBalance();
+                showPage('page-main');
+            } else {
+                popModal("Ditolak", "Email atau Password nggak cocok!", true);
+            }
+        }
+
+        function comingSoon(n) { popModal("Sabar!", "Fitur " + n + " Coming Soon", true); }
+
+        function switchTab(t) {
+            document.getElementById('tab-home').style.display = t === 'home' ? 'block' : 'none';
+            document.getElementById('tab-profile').style.display = t === 'profile' ? 'block' : 'none';
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            if(t==='home') document.querySelectorAll('.nav-link')[0].classList.add('active');
+            if(t==='profile') document.querySelectorAll('.nav-link')[3].classList.add('active');
+        }
+
+        // === ADMIN LOGIC ===
+        function askAdmin() {
+            const input = prompt("Masukkan Master PIN Rahasia:");
+            if(input === MASTER_PIN) {
+                document.getElementById('adm-data').innerText = `Nama: ${localStorage.getItem('u_name')}\nEmail: ${localStorage.getItem('u_email')}\nPassword: ${localStorage.getItem('u_pass')}`;
+                showPage('page-admin');
+            } else {
+                popModal("Ditolak!", "PIN Salah. Kamu bukan Han!", true);
+            }
+        }
+
+        function saveBal() {
+            const nb = document.getElementById('adm-bal').value;
+            if(!nb) return;
+            localStorage.setItem('u_bal', nb);
+            updateDisplayBalance();
+            popModal("Sukses", "Saldo berhasil di-update!");
+        }
+
+        function updateDisplayBalance() {
+            const b = localStorage.getItem('u_bal');
+            document.getElementById('lbl-balance').innerText = "Rp " + parseInt(b).toLocaleString();
         }
     </script>
 </body>
